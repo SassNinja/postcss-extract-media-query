@@ -13,7 +13,9 @@
     "webpack"
   ],
   "main": "index.js",
-  "dependencies": {},
+  "dependencies": {
+    "postcss": "^6.0.22"
+  },
   "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified yet\" && exit 1"
