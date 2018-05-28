@@ -6,6 +6,38 @@ It would be much better if a mobile user doesn't need to load desktop specific C
 
 That's the use case I've written this PostCSS plugin for! It lets you extract all `@media` rules from your CSS and emit them as separate files which you can load as `<link rel="stylesheet" media="screen and (min-width: 1024px)" href="desktop.css">` or as dynamic import.
 
+> **Please note:** currently this plugin is not available via npm/yarn and still WIP! I'll remove this note once it's ready for production (v1.0.0)
+
+**Before**
+
+- example.css
+```css
+.foo { color: red }
+@media screen and (min-width: 1024px) {
+    .foo { color: green }
+}
+.bar { font-size: 1rem }
+@media screen and (min-width: 1024px) {
+    .bar { font-size: 2rem }
+}
+```
+
+**After**
+
+- example.css
+```css
+.foo { color: red }
+.bar { font-size: 1rem }
+```
+
+- example-desktop.css
+```css
+@media screen and (min-width: 1024px) {
+    .foo { color: green }
+    .bar { font-size: 2rem }
+}
+```
+
 ## Installation
 
 - npm
@@ -20,7 +52,7 @@ yarn add postcss-extract-media-query --dev
 
 ## Usage
 
-Simply add the plugin to you PostCSS config. If you're not familiar with PostCSS you should read the official [PostCSS documentation](https://github.com/postcss/postcss#usage) first.
+Simply add the plugin to your PostCSS config. If you're not familiar with using PostCSS you should read the official [PostCSS documentation](https://github.com/postcss/postcss#usage) first.
 
 ### Webpack
 
@@ -45,36 +77,36 @@ module.exports = {
 };
 ```
 
-You can find complete example setups in the <a href="examples">examples</a> folder.
+You can find complete examples <a href="examples">here</a>.
 
 ## Options
 
-| option        | default                      |
-| ------------- | ---------------------------- |
-| output.path   | path.join(__dirname, 'dist') |
-| output.name   | '[name]-[query].[ext]'       |
-| queries       | {}                           |
-| combine       | true                         |
-| stats         | true                         |
+| option        | default                    |
+| ------------- | -------------------------- |
+| output.path   | path.join(__dirname, '..') |
+| output.name   | '[name]-[query].[ext]'     |
+| queries       | {}                         |
+| combine       | true                       |
+| stats         | true                       |
 
 ### output
 
-By default the plugin will emit the extracted CSS files to your root folder. If you want to change this you have to specify an **absolute** path in `output.path`.
+By default the plugin will emit the extracted CSS files to your root folder. If you want to change this you have to define an **absolute** path for `output.path`.
 
-Apart from that you can customize the emited filenames by using `output.name`. `[name]` is the filename of the original CSS file, `[query]` the key of the extracted media rule and `[ext]` orignal file extension (mostly `css`).
+Apart from that you can customize the emited filenames by using `output.name`. `[name]` is the filename of the original CSS file, `[query]` the key of the extracted media query and `[ext]` the orignal file extension (mostly `css`). Those three placeholders get replaced by the plugin later.
 
 ```javascript
 'postcss-extract-media-query': {
     output: {
         path: path.join(__dirname, 'dist'), // emit to 'dist' folder in root
-        name: '[name]-[query].[ext]' // emited filename pattern
+        name: '[name]-[query].[ext]' // pattern of emited files
     }
 }
 ```
 
 ### queries
 
-By default the params of the extracted media rule is converted to kebab case and taken as key (e.g. `screen-and-min-width-1024-px`). You can change this by defining a certain name for this match.
+By default the params of the extracted media query is converted to kebab case and taken as key (e.g. `screen-and-min-width-1024-px`). You can change this by defining a certain name for a certain match. Make sure it **exactly** matches the params (see example below).
 
 ```javascript
 'postcss-extract-media-query': {
