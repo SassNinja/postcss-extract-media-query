@@ -2,30 +2,30 @@
   "name": "postcss-extract-media-query",
   "version": "0.0.1",
   "description": "Extract all media query from CSS and emit them as separate files.",
+  "author": "Kai Falkowski",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified yet\" && exit 1"
+  },
   "keywords": [
     "postcss",
-    "css",
     "plugin",
+    "postcss-plugin",
+    "css",
     "mediaquery",
     "mq",
     "extract",
-    "split",
-    "webpack"
+    "split"
   ],
-  "main": "index.js",
   "dependencies": {
     "fs-extra": "^6.0.1",
     "lodash": "^4.17.10",
     "postcss": "^6.0.22"
   },
   "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified yet\" && exit 1"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/SassNinja/postcss-extract-media-query.git"
-  },
-  "author": "Kai Falkowski",
-  "license": "MIT"
+  }
 }

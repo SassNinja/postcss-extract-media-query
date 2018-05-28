@@ -17,9 +17,10 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
 
     function addToCss(css, key, val) {
         if (!css[key]) {
-            css[key] = postcss.parse('');
+            css[key] = postcss.parse(val);
+        } else {
+            css[key].append(val);
         }
-        css[key].append(val);
     }
 
     return (css, res) => {
