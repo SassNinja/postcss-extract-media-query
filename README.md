@@ -6,7 +6,7 @@ It would be much better if a mobile user doesn't need to load desktop specific C
 
 That's the use case I've written this PostCSS plugin for! It lets you extract all `@media` rules from your CSS and emit them as separate files which you can load as `<link rel="stylesheet" media="screen and (min-width: 1024px)" href="desktop.css">` or as dynamic import.
 
-> **Please note:** currently this plugin is not available via npm/yarn and still WIP! I'll remove this note once it's ready for production (v1.0.0)
+> **Please note:** currently this plugin is not ready for production and WIP! I'll remove this note once it's ready (v.1.0.0)
 
 **Before**
 
@@ -138,3 +138,6 @@ By default the plugin displays in your terminal / command prompt which files hav
 }
 ```
 
+## Credits
+
+If this plugin is helpful to you it'll be great when you give me a github star (scroll to top of this page) and share this plugin. Keeps me motivated to continue the development.
