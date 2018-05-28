@@ -18,6 +18,7 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     function addToCss(css, key, val) {
         if (!css[key]) {
             css[key] = postcss.parse(val);
+            val.remove();
         } else {
             css[key].append(val);
         }
@@ -54,7 +55,7 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             const newFilePath = path.join(opts.output.path, newFile);
 
             // emit extracted css file
-            fs.outputFile(newFilePath, newCss[key].toString())
+            fs.outputFile(newFilePath, newCss[key])
                 .catch(err => {
                     console.error(err);
                 });
