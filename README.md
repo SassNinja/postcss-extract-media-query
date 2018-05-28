@@ -140,4 +140,4 @@ By default the plugin displays in your terminal / command prompt which files hav
 
 ## Credits
 
-If this plugin is helpful to you it'll be great when you give me a github star (scroll to top of this page) and share this plugin. Keeps me motivated to continue the development.
+If this plugin is helpful to you it'll be great when you give me a star on github and share it. Keeps me motivated to continue the development.
