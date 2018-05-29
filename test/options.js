@@ -123,4 +123,24 @@ describe('Options', function() {
         });
     });
 
+    describe('minimize', function() {
+        it('minimize true should minify the emited files\' CSS to one line', function() {
+            const opts = {
+                output: {
+                    path: path.join(__dirname, 'output'),
+                    name: '[name]-[query].min.[ext]'
+                },
+                queries: {
+                    'screen and (min-width: 1024px)': 'desktop'
+                },
+                minimize: true,
+                stats: false
+            };
+            postcss([ plugin(opts) ]).process(exampleFile, { from: 'test/data/example.css'}).css;
+            const output = fs.readFileSync('test/output/example-desktop.min.css', 'utf8');
+            const lines = output.split(/\r\n|\r|\n/).length;
+            assert.equal(lines, 1);
+        });
+    });
+
 });
