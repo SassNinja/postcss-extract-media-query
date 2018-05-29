@@ -20,6 +20,7 @@
   ],
   "dependencies": {
     "chalk": "^2.4.1",
+    "csswring": "^6.0.3",
     "fs-extra": "^6.0.1",
     "lodash": "^4.17.10",
     "postcss": "^6.0.22"

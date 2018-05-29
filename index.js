@@ -4,6 +4,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 const postcss = require('postcss');
+const csswring = require('csswring');
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     
@@ -15,6 +16,7 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
         },
         queries: {},
         combine: true,
+        minimize: false,
         stats: true
     }, opts);
 
@@ -90,7 +92,15 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
                     newRoot.append(newAtRule);
                 });
 
-                fs.outputFileSync(newFilePath, newRoot.toString());
+                if (opts.minimize === true) {
+                    const newRootMinimized = postcss([ csswring() ])
+                                                .process(newRoot.toString(), { from: newFilePath })
+                                                .root;
+                    fs.outputFileSync(newFilePath, newRootMinimized.toString());
+                } else {
+                    fs.outputFileSync(newFilePath, newRoot.toString());
+                }
+
 
                 if (opts.stats === true) {
                     console.log(chalk.green('[extracted media query]'), newFile);

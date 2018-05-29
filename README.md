@@ -131,6 +131,16 @@ By default the plugin will merge equal media rules into one after the extraction
 }
 ```
 
+## minimize
+
+Since the emited files after the extraction are not part of the bundler / task runner flow your possibly defined CSS minimization doesn't take effect. To minimize the emited files as well you have to set this option true.
+
+```javascript
+'postcss-extract-media-query': {
+    minimize: true
+}
+```
+
 ### stats
 
 By default the plugin displays in your terminal / command prompt which files have been emited. If you don't want to see it just set this option `false`.
