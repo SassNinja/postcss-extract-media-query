@@ -88,6 +88,7 @@ You can find complete examples <a href="examples">here</a>.
 | queries       | {}                         |
 | combine       | true                       |
 | stats         | true                       |
+| entry         | null                       |
 
 ### output
 
@@ -135,6 +136,16 @@ By default the plugin displays in your terminal / command prompt which files hav
 ```javascript
 'postcss-extract-media-query': {
     stats: true
+}
+```
+
+### entry
+
+By default the plugin uses the `from` value from the options of the loader or of the options you define in `postcss().process(css, { from: ... })`. Usually you don't need to change it but if you have to you can define an **absolute** file path as entry.
+
+```javascript
+'postcss-extract-media-query': {
+    entry: path.join(__dirname, 'some/path/example.css')
 }
 ```
 

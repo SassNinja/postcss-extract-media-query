@@ -1,2 +1,6 @@
+# general
 .DS_Store
 node_modules
+
+# exclude unit testing output
+test/output

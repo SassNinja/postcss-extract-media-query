@@ -8,6 +8,7 @@ const postcss = require('postcss');
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     
     opts = _.merge({
+        entry: null,
         output: {
             path: path.join(__dirname, '..'),
             name: '[name]-[query].[ext]'
@@ -43,7 +44,15 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
 
     return (root, result) => {
 
-        const file = result.opts.from.match(/[^/\\]+\.\w+$/)[0].split('.');
+        let from = 'undefined.css';
+
+        if (opts.entry) {
+            from = opts.entry;
+        } else if (result.opts.from) {
+            from = result.opts.from;
+        }
+
+        const file = from.match(/[^/\\]+\.\w+$/)[0].split('.');
         const name = file[0];
         const ext = file[1];
 
@@ -64,30 +73,38 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
 
         Object.keys(newAtRules).forEach(key => {
 
-            const newFile = opts.output.name
+            // emit extracted css file
+            if (opts.output.path) {
+
+                const newFile = opts.output.name
                                 .replace('[name]', name)
                                 .replace('[query]', key)
                                 .replace('[ext]', ext);
 
-            const newFilePath = path.join(opts.output.path, newFile);
-
-            // create new root
-            // and append all extracted atRules with current key
-            const newRoot = postcss.root();
-            newAtRules[key].forEach(newAtRule => {
-                newRoot.append(newAtRule);
-            });
-
-            // emit extracted css file
-            fs.outputFile(newFilePath, newRoot.toString())
-                .then(() => {
-                    if (opts.stats === true) {
-                        console.log(chalk.green('[extracted media query]'), newFile);
-                    }
-                })
-                .catch(err => {
-                    console.error(err);
+                const newFilePath = path.join(opts.output.path, newFile);
+                
+                // create new root
+                // and append all extracted atRules with current key
+                const newRoot = postcss.root();
+                newAtRules[key].forEach(newAtRule => {
+                    newRoot.append(newAtRule);
                 });
+
+                fs.outputFileSync(newFilePath, newRoot.toString());
+
+                if (opts.stats === true) {
+                    console.log(chalk.green('[extracted media query]'), newFile);
+                }
+            }
+            // if no output path defined (mostly testing purpose) merge back to root
+            else {
+                newAtRules[key].forEach(newAtRule => {
+                    root.append(newAtRule);
+                });
+            }
+
         });
+
     };
+
 });
