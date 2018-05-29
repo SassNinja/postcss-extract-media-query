@@ -1,12 +1,12 @@
 # postcss-extract-media-query
 
+> <span style="color:red">**Please note:** currently this plugin is not ready for production! I'll remove this note once it's ready (v.1.0.0)</span>
+
 If page speed is important to you chances are high you're already doing code splitting (hopefully with a bundler such as [webpack](https://webpack.js.org/)). If your CSS is built mobile-first (in particular if using a framework such as [Bootstrap](https://getbootstrap.com/) or [Foundation](https://foundation.zurb.com/sites.html)) chances are also high you're loading more CSS than the current viewport actually needs.
 
 It would be much better if a mobile user doesn't need to load desktop specific CSS, wouldn't it?
 
 That's the use case I've written this PostCSS plugin for! It lets you extract all `@media` rules from your CSS and emit them as separate files which you can load as `<link rel="stylesheet" media="screen and (min-width: 1024px)" href="desktop.css">` or as dynamic import.
-
-> **Please note:** currently this plugin is not ready for production and WIP! I'll remove this note once it's ready (v.1.0.0)
 
 **Before**
 
