@@ -1,0 +1,12 @@
+.foo { color: red; }
+@media screen and (min-width: 1024px) {
+  .foo { color: green; }
+}
+.bar { font-size: 1rem; }
+@media screen and (min-width: 1024px) {
+  .bar { font-size: 2rem; }
+}
+.test { z-index: 1; }
+@media screen and (min-width: 1200px) {
+  .test { z-index: 2; }
+}
