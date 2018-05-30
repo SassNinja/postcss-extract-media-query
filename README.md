@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.com/SassNinja/postcss-extract-media-query.svg?branch=master)](https://travis-ci.com/SassNinja/postcss-extract-media-query)
 
-> **Please note:** currently this plugin is not ready for production! I'll remove this note once it's ready (v.1.0.0)
-
 If page speed is important to you chances are high you're already doing code splitting (hopefully with a bundler such as [webpack](https://webpack.js.org/)). If your CSS is built mobile-first (in particular if using a framework such as [Bootstrap](https://getbootstrap.com/) or [Foundation](https://foundation.zurb.com/sites.html)) chances are also high you're loading more CSS than the current viewport actually needs.
 
 It would be much better if a mobile user doesn't need to load desktop specific CSS, wouldn't it?
@@ -72,7 +70,7 @@ module.exports = {
                 path: path.join(__dirname, 'dist')
             },
             queries: {
-                'screen and (min-width: 1024)': 'desktop'
+                'screen and (min-width: 1024px)': 'desktop'
             }
         }
     }
@@ -114,7 +112,7 @@ By default the params of the extracted media query is converted to kebab case an
 ```javascript
 'postcss-extract-media-query': {
     queries: {
-        'screen and (min-width: 1024)': 'desktop'
+        'screen and (min-width: 1024px)': 'desktop'
     }
 }
 ```
