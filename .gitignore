@@ -1,6 +1,7 @@
 # general
 .DS_Store
 node_modules
+.fusebox
 
 # prefer npm
 yarn.lock

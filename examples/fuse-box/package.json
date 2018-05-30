@@ -1,0 +1,20 @@
+{
+  "name": "fuse-box-example",
+  "version": "1.0.0",
+  "description": "Complete example for FuseBox.",
+  "author": "Kai Falkowski",
+  "license": "MIT",
+  "main": "fuse.js",
+  "scripts": {
+    "start": "node fuse.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "fuse-box": "^3.2.2",
+    "postcss": "^6.0.22",
+    "postcss-extract-media-query": "0.0.1",
+    "typescript": "^2.8.3",
+    "uglify-es": "^3.3.9",
+    "uglify-js": "^3.3.28"
+  }
+}
