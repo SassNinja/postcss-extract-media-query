@@ -2,6 +2,7 @@
 .DS_Store
 node_modules
 .fusebox
+.cache
 
 # prefer npm
 yarn.lock

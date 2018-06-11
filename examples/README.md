@@ -6,5 +6,6 @@ In the following you can find complete examples for some bundlers / task runner.
 
 - [Webpack](webpack/)
 - [FuseBox](fuse-box/)
+- [Parcel](parcel/)
 - [Gulp](gulp/)
 - [Grunt](grunt/)
