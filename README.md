@@ -117,6 +117,16 @@ By default the params of the extracted media query is converted to kebab case an
 }
 ```
 
+### whitelist
+
+By default the plugin extracts all media queries into separate files. If you want it to only extract the ones you've defined a certain name for (see `queries` option) you can set the option `whitelist` true. This ignores all media queries that don't have a custom name defined.
+
+```javascript
+'postcss-extract-media-query': {
+    whitelist: true
+}
+```
+
 ### combine
 
 The same media rules will probably appear several times in your original CSS file. This happens when you develop a CSS component and don't want to define the responsive behavior in another file / context.

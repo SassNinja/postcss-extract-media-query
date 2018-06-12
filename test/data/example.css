@@ -10,3 +10,6 @@
 @media screen and (min-width: 1200px) {
   .test { z-index: 2; }
 }
+@media screen and (min-width: 999px) {
+    .whitelist { z-index: 999; }
+}

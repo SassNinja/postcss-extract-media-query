@@ -14,6 +14,25 @@ describe('Options', function() {
         fs.removeSync('test/output');
     });
 
+    describe('whitelist', function() {
+        it('true should cause to ignore all media queries except of the ones defined in the queries options', function() {
+            const opts = {
+                output: {
+                    path: path.join(__dirname, 'output')
+                },
+                queries: {
+                    'screen and (min-width: 999px)': 'whitelist'
+                },
+                whitelist: true,
+                stats: false
+            };
+            postcss([ plugin(opts) ]).process(exampleFile, { from: 'test/data/example.css'}).css;
+            const filesCount = fs.readdirSync('test/output/').length;
+            assert.isTrue(fs.existsSync('test/output/example-whitelist.css'));
+            assert.equal(filesCount, 1);
+        });
+    });
+
     describe('entry', function() {
         it('entry should override any other from option', function() {
             const opts = {
@@ -105,7 +124,7 @@ describe('Options', function() {
             testRoot.walkAtRules(atRule => {
                 count++;
             });
-            assert.equal(count, 2);
+            assert.equal(count, 3);
         });
         it('combine false should prevent merge of equal query atRules', function() {
             const opts = {
@@ -119,7 +138,7 @@ describe('Options', function() {
             testRoot.walkAtRules(atRule => {
                 count++;
             });
-            assert.equal(count, 3);
+            assert.equal(count, 4);
         });
     });
 

@@ -15,6 +15,7 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             name: '[name]-[query].[ext]'
         },
         queries: {},
+        whitelist: false,
         combine: true,
         minimize: false,
         stats: true
@@ -64,13 +65,16 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
 
             // use custom query name if available (e.g. tablet)
             // or otherwise the query key (converted to kebab case)
-            const key = typeof opts.queries[atRule.params] === 'string'
+            const hasCustomName = typeof opts.queries[atRule.params] === 'string';
+            const key = hasCustomName === true
                         ? opts.queries[atRule.params] 
                         : _.kebabCase(atRule.params);
 
-            // extract media atRule
-            // and concatenate with existing atRule (same key)
-            addToAtRules(newAtRules, key, atRule);
+            // extract media atRule and concatenate with existing atRule (same key)
+            // if no whitelist set or if whitelist and atRule has custom query name match
+            if (opts.whitelist === false || hasCustomName === true) {
+                addToAtRules(newAtRules, key, atRule);
+            }
         });
 
         Object.keys(newAtRules).forEach(key => {
