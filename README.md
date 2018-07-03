@@ -118,7 +118,7 @@ By default the plugin will merge equal media rules into one after the extraction
 }
 ```
 
-## minimize
+### minimize
 
 Since the emited, extracted files are outside of the bundler / task runner context your possibly defined CSS minification doesn't take effect. To minimize the emited files as well you have to set this option true.
 
