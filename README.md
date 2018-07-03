@@ -150,7 +150,7 @@ By default the plugin uses the `from` value from the options of the loader or of
 
 ## Webpack User?
 
-If you're using webpack should use [media-query-plugin](https://github.com/SassNinja/media-query-plugin) which is built for webpack only and thus comes with several advantages such as applying all other loaders you've defined and hash support for caching.
+If you're using webpack you should use [media-query-plugin](https://github.com/SassNinja/media-query-plugin) which is built for webpack only and thus comes with several advantages such as applying all other loaders you've defined and hash support for caching.
 
 ## Credits
 
