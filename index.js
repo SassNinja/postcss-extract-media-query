@@ -7,6 +7,7 @@ const postcss = require('postcss');
 const csswring = require('csswring');
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
+
     opts = _.merge({
         entry: null,
         output: {
@@ -66,8 +67,8 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             // or otherwise the query key (converted to kebab case)
             const hasCustomName = typeof opts.queries[atRule.params] === 'string';
             const key = hasCustomName === true
-                ? opts.queries[atRule.params]
-                : _.kebabCase(atRule.params);
+                    ? opts.queries[atRule.params]
+                    : _.kebabCase(atRule.params);
 
             // extract media atRule and concatenate with existing atRule (same key)
             // if no whitelist set or if whitelist and atRule has custom query name match
