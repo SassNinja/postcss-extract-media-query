@@ -7,7 +7,7 @@ const postcss = require('postcss');
 const csswring = require('csswring');
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
-    
+
     opts = _.merge({
         entry: null,
         output: {
@@ -67,8 +67,8 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             // or otherwise the query key (converted to kebab case)
             const hasCustomName = typeof opts.queries[atRule.params] === 'string';
             const key = hasCustomName === true
-                        ? opts.queries[atRule.params] 
-                        : _.kebabCase(atRule.params);
+                ? opts.queries[atRule.params]
+                : _.kebabCase(atRule.params);
 
             // extract media atRule and concatenate with existing atRule (same key)
             // if no whitelist set or if whitelist and atRule has custom query name match
@@ -83,12 +83,12 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             if (opts.output.path) {
 
                 const newFile = opts.output.name
-                                .replace('[name]', name)
-                                .replace('[query]', key)
-                                .replace('[ext]', ext);
+                    .replace(/\[name\]/g, name)
+                    .replace(/\[query\]/g, key)
+                    .replace(/\[ext\]/g, ext)
 
                 const newFilePath = path.join(opts.output.path, newFile);
-                
+
                 // create new root
                 // and append all extracted atRules with current key
                 const newRoot = postcss.root();
@@ -97,9 +97,9 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
                 });
 
                 if (opts.minimize === true) {
-                    const newRootMinimized = postcss([ csswring() ])
-                                                .process(newRoot.toString(), { from: newFilePath })
-                                                .root;
+                    const newRootMinimized = postcss([csswring()])
+                        .process(newRoot.toString(), { from: newFilePath })
+                        .root;
                     fs.outputFileSync(newFilePath, newRootMinimized.toString());
                 } else {
                     fs.outputFileSync(newFilePath, newRoot.toString());
