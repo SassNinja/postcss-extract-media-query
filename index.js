@@ -7,7 +7,6 @@ const postcss = require('postcss');
 const csswring = require('csswring');
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
-
     opts = _.merge({
         entry: null,
         output: {
@@ -97,7 +96,7 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
                 });
 
                 if (opts.minimize === true) {
-                    const newRootMinimized = postcss([csswring()])
+                    const newRootMinimized = postcss([ csswring() ])
                         .process(newRoot.toString(), { from: newFilePath })
                         .root;
                     fs.outputFileSync(newFilePath, newRootMinimized.toString());
