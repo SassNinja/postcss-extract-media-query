@@ -7,6 +7,7 @@ const postcss = require('postcss');
 const csswring = require('csswring');
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
+    
     opts = _.merge({
         entry: null,
         output: {
