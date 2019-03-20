@@ -80,6 +80,18 @@ describe('Options', function() {
             assert.isTrue(fs.existsSync('test/output/screen-and-min-width-1024-px.css'));
             assert.isTrue(fs.existsSync('test/output/screen-and-min-width-1200-px.css'));
         });
+        it('output.name should support using the same placeholder multiple times', function () {
+            const opts = {
+                output: {
+                    path: path.join(__dirname, 'output'),
+                    name: '[query]-[query].[ext]'
+                },
+                stats: false
+            };
+            postcss([plugin(opts)]).process(exampleFile, { from: 'test/data/example.css' }).css;
+            assert.isTrue(fs.existsSync('test/output/screen-and-min-width-1024-px-screen-and-min-width-1024-px.css'));
+            assert.isTrue(fs.existsSync('test/output/screen-and-min-width-1200-px-screen-and-min-width-1200-px.css'));
+        });
     });
 
     describe('queries', function() {
