@@ -55,9 +55,9 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             from = result.opts.from;
         }
 
-        const file = from.match(/[^/\\]+\.\w+$/)[0].split('.');
-        const name = file[0];
-        const ext = file[1];
+        const file = from.match(/([^/\\]+)\.(\w+)(?:\?.+)?$/);
+        const name = file[1];
+        const ext = file[2];
 
         const newAtRules = {};
 
