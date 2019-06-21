@@ -36,14 +36,14 @@ describe('Options', function() {
     describe('entry', function() {
         it('entry should override any other from option', function() {
             const opts = {
-                entry: path.join(__dirname, 'data/entry-example.css'),
+                entry: path.join(__dirname, 'data/entry-example.namespace.css'),
                 output: {
                     path: path.join(__dirname, 'output')
                 },
                 stats: false
             };
             postcss([ plugin(opts) ]).process(entryExampleFile, { from: 'test/data/example.css'}).css;
-            assert.isTrue(fs.existsSync('test/output/entry-example-screen.css'));
+            assert.isTrue(fs.existsSync('test/output/entry-example.namespace-screen.css'));
         });
     });
 
