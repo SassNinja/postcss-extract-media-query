@@ -96,13 +96,13 @@ By default the params of the extracted media query is converted to kebab case an
 }
 ```
 
-### whitelist
+### extractAll
 
-By default the plugin extracts all media queries into separate files. If you want it to only extract the ones you've defined a certain name for (see `queries` option) you have to set this option `true`. This ignores all media queries that don't have a custom name defined.
+By default the plugin extracts all media queries into separate files. If you want it to only extract the ones you've defined a certain name for (see `queries` option) you have to set this option `false`. This ignores all media queries that don't have a custom name defined.
 
 ```javascript
 'postcss-extract-media-query': {
-    whitelist: true
+    extractAll: false
 }
 ```
 

@@ -5,6 +5,7 @@ const path = require('path');
 const chalk = require('chalk');
 const postcss = require('postcss');
 const csswring = require('csswring');
+const combineMedia = require('./combine-media');
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     
@@ -15,34 +16,35 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             name: '[name]-[query].[ext]'
         },
         queries: {},
-        whitelist: false,
+        extractAll: true,
         combine: true,
         minimize: false,
         stats: true
     }, opts);
 
-    function addToAtRules(atRules, key, atRule) {
-
-        // init array for target key if undefined
-        if (!atRules[key]) {
-            atRules[key] = [];
+    // Deprecation warnings
+    // TODO: remove in future
+    if (typeof opts.whitelist === 'boolean') {
+        console.log(chalk.yellow(`[WARNING] whitelist option is deprecated and will be removed in future – please use extractAll`));
+        if (opts.whitelist === true) {
+            opts.extractAll = false;
         }
+    }
 
-        // create new atRule if none existing or combine false
-        if (atRules[key].length < 1 || opts.combine === false) {
-            atRules[key].push(postcss.atRule({ name: atRule.name, params: atRule.params }));
+    const media = {};
+
+    function addMedia(key, css, query) {
+        if (!Array.isArray(media[key])) {
+            media[key] = [];
         }
+        media[key].push({ css, query });
+    }
 
-        // pointer to last item in array
-        const lastAtRule = atRules[key][atRules[key].length - 1];
+    function getMedia(key) {
+        const css = media[key].map(data => data.css).join('\n');
+        const query = media[key][0].query;
 
-        // append all rules
-        atRule.walkRules(rule => {
-            lastAtRule.append(rule);
-        });
-
-        // remove atRule from original chunk
-        atRule.remove();
+        return { css, query };
     }
 
     return (root, result) => {
@@ -59,65 +61,83 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
         const name = file[1];
         const ext = file[2];
 
-        const newAtRules = {};
-
         root.walkAtRules('media', atRule => {
 
-            // use custom query name if available (e.g. tablet)
-            // or otherwise the query key (converted to kebab case)
-            const hasCustomName = typeof opts.queries[atRule.params] === 'string';
-            const key = hasCustomName === true
-                        ? opts.queries[atRule.params]
-                        : _.kebabCase(atRule.params);
+            const query = atRule.params;
+            const queryname = opts.queries[query] || (opts.extractAll && _.kebabCase(query));
 
-            // extract media atRule and concatenate with existing atRule (same key)
-            // if no whitelist set or if whitelist and atRule has custom query name match
-            if (opts.whitelist === false || hasCustomName === true) {
-                addToAtRules(newAtRules, key, atRule);
+            if (queryname) {
+                const css = postcss.root().append(atRule).toString();
+
+                addMedia(queryname, css, query);
+
+                if (opts.output.path) {
+                    atRule.remove();
+                }
             }
         });
 
-        Object.keys(newAtRules).forEach(key => {
+        // emit file(s) with extracted css
+        if (opts.output.path) {
 
-            // emit extracted css file
-            if (opts.output.path) {
+            Object.keys(media).forEach(queryname => {
+
+                let { css } = getMedia(queryname);
 
                 const newFile = opts.output.name
                                 .replace(/\[name\]/g, name)
-                                .replace(/\[query\]/g, key)
+                                .replace(/\[query\]/g, queryname)
                                 .replace(/\[ext\]/g, ext)
 
                 const newFilePath = path.join(opts.output.path, newFile);
 
-                // create new root
-                // and append all extracted atRules with current key
-                const newRoot = postcss.root();
-                newAtRules[key].forEach(newAtRule => {
-                    newRoot.append(newAtRule);
-                });
-
-                if (opts.minimize === true) {
-                    const newRootMinimized = postcss([ csswring() ])
-                                                .process(newRoot.toString(), { from: newFilePath })
-                                                .root;
-                    fs.outputFileSync(newFilePath, newRootMinimized.toString());
-                } else {
-                    fs.outputFileSync(newFilePath, newRoot.toString());
+                if (opts.combine === true) {
+                    css = postcss([ combineMedia() ])
+                                .process(css, { from: newFilePath })
+                                .root
+                                .toString();
                 }
 
+                if (opts.minimize === true) {
+                    const cssMinimized = postcss([ csswring() ])
+                                                .process(css, { from: newFilePath })
+                                                .root
+                                                .toString();
+                    fs.outputFileSync(newFilePath, cssMinimized);
+                } else {
+                    fs.outputFileSync(newFilePath, css);
+                }
 
                 if (opts.stats === true) {
                     console.log(chalk.green('[extracted media query]'), newFile);
                 }
-            }
-            // if no output path defined (mostly testing purpose) merge back to root
-            else {
-                newAtRules[key].forEach(newAtRule => {
-                    root.append(newAtRule);
-                });
-            }
+            });
+        }
 
-        });
+        // if no output path defined (mostly testing purpose) merge back to root
+        // TODO: remove this in v2 together with combine & minimize
+        else {
+            
+            Object.keys(media).forEach(queryname => {
+
+                let { css } = getMedia(queryname);
+
+                if (opts.combine === true) {
+                    css = postcss([ combineMedia() ])
+                            .process(css, { from })
+                            .root
+                            .toString();
+                }
+                if (opts.minimize === true) {
+                    css = postcss([ csswring() ])
+                            .process(css, { from })
+                            .root
+                            .toString();
+                }
+
+                root.append(postcss.parse(css));
+            });
+        }
 
     };
 

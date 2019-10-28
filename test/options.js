@@ -14,21 +14,21 @@ describe('Options', function() {
         fs.removeSync('test/output');
     });
 
-    describe('whitelist', function() {
+    describe('extractAll', function() {
         it('true should cause to ignore all media queries except of the ones defined in the queries options', function() {
             const opts = {
                 output: {
                     path: path.join(__dirname, 'output')
                 },
                 queries: {
-                    'screen and (min-width: 999px)': 'whitelist'
+                    'screen and (min-width: 999px)': 'extract-all'
                 },
-                whitelist: true,
+                extractAll: false,
                 stats: false
             };
             postcss([ plugin(opts) ]).process(exampleFile, { from: 'test/data/example.css'}).css;
             const filesCount = fs.readdirSync('test/output/').length;
-            assert.isTrue(fs.existsSync('test/output/example-whitelist.css'));
+            assert.isTrue(fs.existsSync('test/output/example-extract-all.css'));
             assert.equal(filesCount, 1);
         });
     });
