@@ -63,6 +63,7 @@ You can find complete examples <a href="examples">here</a>.
 | output.path   | path.join(__dirname, '..') |
 | output.name   | '[name]-[query].[ext]'     |
 | queries       | {}                         |
+| extractAll    | true                       |
 | combine       | true                       |
 | stats         | true                       |
 | entry         | null                       |
