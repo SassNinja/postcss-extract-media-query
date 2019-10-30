@@ -6,7 +6,9 @@ const extractMediaQuery = require('postcss-extract-media-query');
 
 function clean() {
     return gulp.src(path.join(__dirname, 'dist/*'))
-        .pipe($.deleteFile());
+        .pipe($.deleteFile({
+            deleteMatch: true
+        }));
 }
 
 function css() {
