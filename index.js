@@ -21,16 +21,22 @@ function readConfigFile(file) {
 const config = readConfigFile();
 const allPluginNames = config.plugins ? Object.keys(config.plugins) : [];
 const subsequentPluginNames = allPluginNames.slice(allPluginNames.indexOf('postcss-extract-media-query') + 1);
-const subsequentPlugins = subsequentPluginNames.map(name => require(name)(config.plugins[name]));
+const subsequentPlugins = subsequentPluginNames.map(name => ({ name, mod: require(name), opts: config.plugins[name] }));
 
 function applySubsequentPlugins(css, filePath) {
-    if (subsequentPlugins.length) {
-        return postcss(subsequentPlugins)
+    // generate initialized plugins array (cannot be done before)
+    const plugins = subsequentPlugins.map(plugin => plugin.mod(plugin.opts))
+
+    if (plugins.length) {
+        return new Promise(resolve => {
+            postcss(plugins)
                 .process(css, { from: filePath })
-                .root
-                .toString();
+                .then(result => {
+                    resolve(result.css);
+                })
+        });
     }
-    return css;
+    return Promise.resolve(css);
 }
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
@@ -109,27 +115,34 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             }
         });
 
+        const promises = [];
+
         // emit file(s) with extracted css
         if (opts.output.path) {
 
             Object.keys(media).forEach(queryname => {
 
-                let { css } = getMedia(queryname);
+                promises.push(new Promise(resolve => {
 
-                const newFile = opts.output.name
-                                .replace(/\[name\]/g, name)
-                                .replace(/\[query\]/g, queryname)
-                                .replace(/\[ext\]/g, ext)
+                    let { css } = getMedia(queryname);
+    
+                    const newFile = opts.output.name
+                                    .replace(/\[name\]/g, name)
+                                    .replace(/\[query\]/g, queryname)
+                                    .replace(/\[ext\]/g, ext)
+    
+                    const newFilePath = path.join(opts.output.path, newFile);
+    
+                    applySubsequentPlugins(css, newFilePath).then(css => {
 
-                const newFilePath = path.join(opts.output.path, newFile);
-
-                css = applySubsequentPlugins(css, newFilePath);
-
-                fs.outputFileSync(newFilePath, css);
-
-                if (opts.stats === true) {
-                    console.log(chalk.green('[extracted media query]'), newFile);
-                }
+                        fs.outputFileSync(newFilePath, css);
+        
+                        if (opts.stats === true) {
+                            console.log(chalk.green('[extracted media query]'), newFile);
+                        }
+                        resolve();
+                    });
+                }));
             });
         }
 
@@ -139,14 +152,19 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
             
             Object.keys(media).forEach(queryname => {
 
-                let { css } = getMedia(queryname);
+                promises.push(new Promise(resolve => {
 
-                css = applySubsequentPlugins(css, from);
-
-                root.append(postcss.parse(css));
+                    let { css } = getMedia(queryname);
+    
+                    applySubsequentPlugins(css, from).then(css => {
+                        root.append(postcss.parse(css));
+                        resolve();
+                    });
+                }));
             });
         }
 
+        return Promise.all(promises);
     };
 
 });
