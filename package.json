@@ -20,6 +20,7 @@
     "combine"
   ],
   "dependencies": {
+    "app-root-path": "^3.0.0",
     "chalk": "^2.4.1",
     "csswring": "^6.0.3",
     "fs-extra": "^6.0.1",

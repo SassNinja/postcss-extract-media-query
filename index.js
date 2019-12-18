@@ -4,8 +4,34 @@ const fs = require('fs-extra');
 const path = require('path');
 const chalk = require('chalk');
 const postcss = require('postcss');
-const csswring = require('csswring');
-const combineMedia = require('./combine-media');
+const rootPath = require('app-root-path').path
+
+function readConfigFile(file) {
+    if (file && !path.isAbsolute(file)) {
+        file = path.join(rootPath, file);
+    }
+    const filePath = file || path.join(rootPath, 'postcss.config.js');
+
+    if (fs.existsSync(filePath)) {
+        return require(filePath);
+    }
+    return {};
+}
+
+const config = readConfigFile();
+const allPluginNames = config.plugins ? Object.keys(config.plugins) : [];
+const subsequentPluginNames = allPluginNames.slice(allPluginNames.indexOf('postcss-extract-media-query') + 1);
+const subsequentPlugins = subsequentPluginNames.map(name => require(name)(config.plugins[name]));
+
+function applySubsequentPlugins(css, filePath) {
+    if (subsequentPlugins.length) {
+        return postcss(subsequentPlugins)
+                .process(css, { from: filePath })
+                .root
+                .toString();
+    }
+    return css;
+}
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     
@@ -17,18 +43,24 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
         },
         queries: {},
         extractAll: true,
-        combine: true,
-        minimize: false,
         stats: true
     }, opts);
 
     // Deprecation warnings
     // TODO: remove in future
     if (typeof opts.whitelist === 'boolean') {
-        console.log(chalk.yellow(`[WARNING] whitelist option is deprecated and will be removed in future – please use extractAll`));
+        console.log(chalk.yellow('[WARNING] whitelist option is deprecated – please use extractAll'));
         if (opts.whitelist === true) {
             opts.extractAll = false;
         }
+    }
+    if (opts.combine) {
+        console.log(chalk.yellow('[WARNING] combine option is deprecated – please use another plugin for this'));
+        console.log(chalk.yellow('\trecommended: https://github.com/SassNinja/postcss-combine-media-query'));
+    }
+    if (opts.minimize) {
+        console.log(chalk.yellow('[WARNING] minimize option is deprecated – please use another plugin for this'));
+        console.log(chalk.yellow('\trecommended: https://github.com/cssnano/cssnano'));
     }
 
     const media = {};
@@ -91,22 +123,9 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
 
                 const newFilePath = path.join(opts.output.path, newFile);
 
-                if (opts.combine === true) {
-                    css = postcss([ combineMedia() ])
-                                .process(css, { from: newFilePath })
-                                .root
-                                .toString();
-                }
+                css = applySubsequentPlugins(css, newFilePath);
 
-                if (opts.minimize === true) {
-                    const cssMinimized = postcss([ csswring() ])
-                                                .process(css, { from: newFilePath })
-                                                .root
-                                                .toString();
-                    fs.outputFileSync(newFilePath, cssMinimized);
-                } else {
-                    fs.outputFileSync(newFilePath, css);
-                }
+                fs.outputFileSync(newFilePath, css);
 
                 if (opts.stats === true) {
                     console.log(chalk.green('[extracted media query]'), newFile);
@@ -122,18 +141,7 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
 
                 let { css } = getMedia(queryname);
 
-                if (opts.combine === true) {
-                    css = postcss([ combineMedia() ])
-                            .process(css, { from })
-                            .root
-                            .toString();
-                }
-                if (opts.minimize === true) {
-                    css = postcss([ csswring() ])
-                            .process(css, { from })
-                            .root
-                            .toString();
-                }
+                css = applySubsequentPlugins(css, from);
 
                 root.append(postcss.parse(css));
             });
