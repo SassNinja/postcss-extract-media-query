@@ -24,7 +24,6 @@ const subsequentPluginNames = allPluginNames.slice(allPluginNames.indexOf('postc
 const subsequentPlugins = subsequentPluginNames.map(name => ({ name, mod: require(name), opts: config.plugins[name] }));
 
 function applySubsequentPlugins(css, filePath) {
-    // generate initialized plugins array (cannot be done before)
     const plugins = subsequentPlugins.map(plugin => plugin.mod(plugin.opts))
 
     if (plugins.length) {
@@ -99,70 +98,54 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
         const name = file[1];
         const ext = file[2];
 
-        root.walkAtRules('media', atRule => {
-
-            const query = atRule.params;
-            const queryname = opts.queries[query] || (opts.extractAll && _.kebabCase(query));
-
-            if (queryname) {
-                const css = postcss.root().append(atRule).toString();
-
-                addMedia(queryname, css, query);
-
-                if (opts.output.path) {
+        if (opts.output.path) {
+            
+            root.walkAtRules('media', atRule => {
+    
+                const query = atRule.params;
+                const queryname = opts.queries[query] || (opts.extractAll && _.kebabCase(query));
+    
+                if (queryname) {
+                    const css = postcss.root().append(atRule).toString();
+    
+                    addMedia(queryname, css, query);
                     atRule.remove();
                 }
-            }
-        });
+            });
+        }
 
         const promises = [];
 
-        // emit file(s) with extracted css
-        if (opts.output.path) {
+        Object.keys(media).forEach(queryname => {
 
-            Object.keys(media).forEach(queryname => {
+            promises.push(new Promise(resolve => {
 
-                promises.push(new Promise(resolve => {
+                let { css } = getMedia(queryname);
 
-                    let { css } = getMedia(queryname);
-    
+                if (opts.output.path) {
+
                     const newFile = opts.output.name
                                     .replace(/\[name\]/g, name)
                                     .replace(/\[query\]/g, queryname)
                                     .replace(/\[ext\]/g, ext)
     
                     const newFilePath = path.join(opts.output.path, newFile);
+
+                    if (opts.output.path) {
+
+                        applySubsequentPlugins(css, newFilePath).then(css => {
     
-                    applySubsequentPlugins(css, newFilePath).then(css => {
-
-                        fs.outputFileSync(newFilePath, css);
-        
-                        if (opts.stats === true) {
-                            console.log(chalk.green('[extracted media query]'), newFile);
-                        }
-                        resolve();
-                    });
-                }));
-            });
-        }
-
-        // if no output path defined (mostly testing purpose) merge back to root
-        // TODO: remove this in v2 together with combine & minimize
-        else {
+                            fs.outputFileSync(newFilePath, css);
             
-            Object.keys(media).forEach(queryname => {
-
-                promises.push(new Promise(resolve => {
-
-                    let { css } = getMedia(queryname);
-    
-                    applySubsequentPlugins(css, from).then(css => {
-                        root.append(postcss.parse(css));
-                        resolve();
-                    });
-                }));
-            });
-        }
+                            if (opts.stats === true) {
+                                console.log(chalk.green('[extracted media query]'), newFile);
+                            }
+                            resolve();
+                        });
+                    }
+                }
+            }));
+        });
 
         return Promise.all(promises);
     };
