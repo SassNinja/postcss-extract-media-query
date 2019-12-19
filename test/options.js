@@ -1,7 +1,8 @@
 
 const assert = require('chai').assert;
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
+const rimraf = require('rimraf');
 const postcss = require('postcss');
 const plugin = require('../index.js');
 
@@ -10,8 +11,8 @@ const entryExampleFile = fs.readFileSync('test/data/entry-example.css', 'utf-8')
 
 describe('Options', function() {
 
-    before(function() {
-        fs.removeSync('test/output');
+    before((done) => {
+        rimraf('test/output', done);
     });
 
     describe('extractAll', function() {

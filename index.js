@@ -1,8 +1,8 @@
 
 const _ = require('lodash');
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk');
+const { green, yellow } = require('kleur');
 const postcss = require('postcss');
 const rootPath = require('app-root-path').path
 
@@ -54,18 +54,16 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     // Deprecation warnings
     // TODO: remove in future
     if (typeof opts.whitelist === 'boolean') {
-        console.log(chalk.yellow('[WARNING] whitelist option is deprecated – please use extractAll'));
+        console.log(yellow('[WARNING] whitelist option is deprecated – please use extractAll'));
         if (opts.whitelist === true) {
             opts.extractAll = false;
         }
     }
     if (opts.combine) {
-        console.log(chalk.yellow('[WARNING] combine option is deprecated – please use another plugin for this'));
-        console.log(chalk.yellow('\trecommended: https://github.com/SassNinja/postcss-combine-media-query'));
+        console.log(yellow('[WARNING] combine option is deprecated – please use another plugin for this'));
     }
     if (opts.minimize) {
-        console.log(chalk.yellow('[WARNING] minimize option is deprecated – please use another plugin for this'));
-        console.log(chalk.yellow('\trecommended: https://github.com/cssnano/cssnano'));
+        console.log(yellow('[WARNING] minimize option is deprecated – please use another plugin for this'));
     }
 
     const media = {};
@@ -130,15 +128,21 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
                                     .replace(/\[ext\]/g, ext)
     
                     const newFilePath = path.join(opts.output.path, newFile);
+                    const newFileDir = path.dirname(newFilePath);
 
                     if (opts.output.path) {
 
                         applySubsequentPlugins(css, newFilePath).then(css => {
     
-                            fs.outputFileSync(newFilePath, css);
+                            if (!fs.existsSync(path.dirname(newFilePath))) {
+                                // make sure we can write
+                                fs.mkdirSync(newFileDir, { recursive: true });
+                            }
+
+                            fs.writeFileSync(newFilePath, css);
             
                             if (opts.stats === true) {
-                                console.log(chalk.green('[extracted media query]'), newFile);
+                                console.log(green('[extracted media query]'), newFile);
                             }
                             resolve();
                         });
