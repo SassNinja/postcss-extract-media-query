@@ -64,7 +64,6 @@ You can find complete examples <a href="examples">here</a>.
 | output.name   | '[name]-[query].[ext]'     |
 | queries       | {}                         |
 | extractAll    | true                       |
-| combine       | true                       |
 | stats         | true                       |
 | entry         | null                       |
 
@@ -107,28 +106,6 @@ By default the plugin extracts all media queries into separate files. If you wan
 }
 ```
 
-### combine
-
-The same media rules will probably appear several times in your original CSS file. This happens when you develop a CSS component and don't want to define the responsive behavior in another file / context.
-
-By default the plugin will merge equal media rules into one after the extraction so you've got finally only one media rule per file. In case you don't want this merge (for whatever reason) you can disable it by setting this option `false`.
-
-```javascript
-'postcss-extract-media-query': {
-    combine: true
-}
-```
-
-### minimize
-
-Since the emited, extracted files are outside of the bundler / task runner context your possibly defined CSS minification doesn't take effect. To minimize the emited files as well you have to set this option true.
-
-```javascript
-'postcss-extract-media-query': {
-    minimize: true
-}
-```
-
 ### stats
 
 By default the plugin displays in your terminal / command prompt which files have been emited. If you don't want to see it just set this option `false`.
@@ -146,6 +123,25 @@ By default the plugin uses the `from` value from the options of the loader or of
 ```javascript
 'postcss-extract-media-query': {
     entry: path.join(__dirname, 'some/path/example.css')
+}
+```
+
+## Migration
+
+### coming from 1.x
+
+Both options, `combine` and `minimize`, have been removed in v2 because the plugin parses your `postcss.config.js` now and applies all subsequent plugins to the extracted files as well.
+
+So if you have used them you simply need to install appropriate PostCSS plugins (see below for example) and add them to your config.
+
+```bash
+npm install postcss-combine-media-query cssnano --save-dev
+```
+```javascript
+plugins: {
+    'postcss-combine-media-query': {},
+    'postcss-extract-media-query': {},
+    'cssnano': {},
 }
 ```
 

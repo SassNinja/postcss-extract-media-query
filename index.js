@@ -41,14 +41,14 @@ function applySubsequentPlugins(css, filePath) {
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     
     opts = _.merge({
-        entry: null,
         output: {
             path: path.join(__dirname, '..'),
             name: '[name]-[query].[ext]'
         },
         queries: {},
         extractAll: true,
-        stats: true
+        stats: true,
+        entry: null
     }, opts);
 
     // Deprecation warnings
