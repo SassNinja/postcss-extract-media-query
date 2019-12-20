@@ -148,4 +148,43 @@ describe('Options', function() {
         });
     });
 
+    describe('config', function() {
+        it('should use opts.config if present to apply plugins', (done) => {
+            let precedingPluginCalls = 0;
+            const precedingPlugin = postcss.plugin('preceding-plugin', (opts) => {
+                return (root, result) => {
+                    precedingPluginCalls++;
+                };
+            });
+            let subsequentPluginCalls = 0;
+            const subsequentPlugin = postcss.plugin('subsequent-plugin', (opts) => {
+                return (root, result) => {
+                    subsequentPluginCalls++;
+                };
+            });
+            const opts = {
+                output: {
+                    path: path.join(__dirname, 'output')
+                },
+                stats: false,
+                config: {
+                    pluginsSrc: {
+                        'preceding-plugin': precedingPlugin,
+                        'subsequent-plugin': subsequentPlugin
+                    },
+                    plugins: {
+                        'preceding-plugin': {},
+                        'postcss-extract-media-query': {},
+                        'subsequent-plugin': {}
+                    }
+                }
+            };
+            postcss([ plugin(opts) ]).process(exampleFile, { from: 'test/data/example.css' }).then(() => {
+                assert.equal(precedingPluginCalls, 0);
+                assert.isAtLeast(subsequentPluginCalls, 1);
+                done();
+            });
+        });
+    });
+
 });

@@ -126,13 +126,38 @@ By default the plugin uses the `from` value from the options of the loader or of
 }
 ```
 
+### config
+
+By default the plugin looks for a `postcss.config.js` file in your project's root (read [node-app-root-path](https://github.com/inxilpro/node-app-root-path) to understand how root is determined) and tries to apply all subsequent PostCSS plugins to the extracted CSS.
+
+In case this lookup doesn't suite you it's possible to specify the config path yourself.
+
+```javascript
+'postcss-extract-media-query': {
+    config: path.join(__dirname, 'some/path/postcss.config.js')
+}
+```
+
+It's also possible to pass the config as object to avoid any file resolution.
+
+```javascript
+'postcss-extract-media-query': {
+    config: {
+        plugins: {
+            'postcss-extract-media-query': {}
+            'cssnano': {}
+        }
+    }
+}
+```
+
 ## Migration
 
 ### coming from 1.x
 
 Both options, `combine` and `minimize`, have been removed in v2 because the plugin parses your `postcss.config.js` now and applies all subsequent plugins to the extracted files as well.
 
-So if you have used them you simply need to install appropriate PostCSS plugins (see below for example) and add them to your config.
+So if you have used them you simply need to install appropriate PostCSS plugins (see below for example) and add them to your PostCSS config.
 
 ```bash
 npm install postcss-combine-media-query cssnano --save-dev
@@ -144,6 +169,10 @@ plugins: {
     'cssnano': {},
 }
 ```
+
+### plugin authors
+
+If you're using this plugin via the api (e.g. for your own plugin) you should note it has changed from sync to async in v2. This was necessary in the course of going with promises. I'm not going to keep support of the sync api because it would make the code more complex than necessary and it's officially recommended to use async. Please check the tests to see how it has to be done now!
 
 ## Webpack User?
 
