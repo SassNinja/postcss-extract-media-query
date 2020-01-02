@@ -1,34 +1,43 @@
 
 const _ = require('lodash');
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
-const chalk = require('chalk');
+const { green, yellow } = require('kleur');
 const postcss = require('postcss');
-const csswring = require('csswring');
-const combineMedia = require('./combine-media');
+const SubsequentPlugins = require('./subsequent-plugins');
+
+const plugins = new SubsequentPlugins();
 
 module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     
     opts = _.merge({
-        entry: null,
         output: {
             path: path.join(__dirname, '..'),
             name: '[name]-[query].[ext]'
         },
         queries: {},
         extractAll: true,
-        combine: true,
-        minimize: false,
-        stats: true
+        stats: true,
+        entry: null
     }, opts);
+
+    if (opts.config) {
+        plugins.updateConfig(opts.config);
+    }
 
     // Deprecation warnings
     // TODO: remove in future
     if (typeof opts.whitelist === 'boolean') {
-        console.log(chalk.yellow(`[WARNING] whitelist option is deprecated and will be removed in future – please use extractAll`));
+        console.log(yellow('[WARNING] whitelist option is deprecated – please use extractAll'));
         if (opts.whitelist === true) {
             opts.extractAll = false;
         }
+    }
+    if (opts.combine) {
+        console.log(yellow('[WARNING] combine option is deprecated – please use another plugin for this'));
+    }
+    if (opts.minimize) {
+        console.log(yellow('[WARNING] minimize option is deprecated – please use another plugin for this'));
     }
 
     const media = {};
@@ -61,84 +70,55 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
         const name = file[1];
         const ext = file[2];
 
-        root.walkAtRules('media', atRule => {
-
-            const query = atRule.params;
-            const queryname = opts.queries[query] || (opts.extractAll && _.kebabCase(query));
-
-            if (queryname) {
-                const css = postcss.root().append(atRule).toString();
-
-                addMedia(queryname, css, query);
-
-                if (opts.output.path) {
+        if (opts.output.path) {
+            
+            root.walkAtRules('media', atRule => {
+    
+                const query = atRule.params;
+                const queryname = opts.queries[query] || (opts.extractAll && _.kebabCase(query));
+    
+                if (queryname) {
+                    const css = postcss.root().append(atRule).toString();
+    
+                    addMedia(queryname, css, query);
                     atRule.remove();
                 }
-            }
-        });
+            });
+        }
 
-        // emit file(s) with extracted css
+        const promises = [];
+
+        // gather promises only if output.path specified because otherwise
+        // nothing has been extracted
         if (opts.output.path) {
-
             Object.keys(media).forEach(queryname => {
+                promises.push(new Promise(resolve => {
+                    let { css } = getMedia(queryname);
+                    const newFile = opts.output.name
+                                    .replace(/\[name\]/g, name)
+                                    .replace(/\[query\]/g, queryname)
+                                    .replace(/\[ext\]/g, ext);
+                    const newFilePath = path.join(opts.output.path, newFile);
+                    const newFileDir = path.dirname(newFilePath);
 
-                let { css } = getMedia(queryname);
+                    plugins.applyPlugins(css, newFilePath).then(css => {
 
-                const newFile = opts.output.name
-                                .replace(/\[name\]/g, name)
-                                .replace(/\[query\]/g, queryname)
-                                .replace(/\[ext\]/g, ext)
-
-                const newFilePath = path.join(opts.output.path, newFile);
-
-                if (opts.combine === true) {
-                    css = postcss([ combineMedia() ])
-                                .process(css, { from: newFilePath })
-                                .root
-                                .toString();
-                }
-
-                if (opts.minimize === true) {
-                    const cssMinimized = postcss([ csswring() ])
-                                                .process(css, { from: newFilePath })
-                                                .root
-                                                .toString();
-                    fs.outputFileSync(newFilePath, cssMinimized);
-                } else {
-                    fs.outputFileSync(newFilePath, css);
-                }
-
-                if (opts.stats === true) {
-                    console.log(chalk.green('[extracted media query]'), newFile);
-                }
+                        if (!fs.existsSync(path.dirname(newFilePath))) {
+                            // make sure we can write
+                            fs.mkdirSync(newFileDir, { recursive: true });
+                        }
+                        fs.writeFileSync(newFilePath, css);
+        
+                        if (opts.stats === true) {
+                            console.log(green('[extracted media query]'), newFile);
+                        }
+                        resolve();
+                    });
+                }));
             });
         }
 
-        // if no output path defined (mostly testing purpose) merge back to root
-        // TODO: remove this in v2 together with combine & minimize
-        else {
-            
-            Object.keys(media).forEach(queryname => {
-
-                let { css } = getMedia(queryname);
-
-                if (opts.combine === true) {
-                    css = postcss([ combineMedia() ])
-                            .process(css, { from })
-                            .root
-                            .toString();
-                }
-                if (opts.minimize === true) {
-                    css = postcss([ csswring() ])
-                            .process(css, { from })
-                            .root
-                            .toString();
-                }
-
-                root.append(postcss.parse(css));
-            });
-        }
-
+        return Promise.all(promises);
     };
 
 });

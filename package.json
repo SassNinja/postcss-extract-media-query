@@ -1,6 +1,6 @@
 {
   "name": "postcss-extract-media-query",
-  "version": "1.3.0",
+  "version": "2.0.0",
   "description": "PostCSS plugin to extract all media query from CSS and emit as separate files.",
   "author": "Kai Falkowski",
   "license": "MIT",
@@ -20,15 +20,15 @@
     "combine"
   ],
   "dependencies": {
-    "chalk": "^2.4.1",
-    "csswring": "^6.0.3",
-    "fs-extra": "^6.0.1",
+    "app-root-path": "^3.0.0",
+    "kleur": "^3.0.3",
     "lodash": "^4.17.10",
     "postcss": "^6.0.22"
   },
   "devDependencies": {
     "chai": "^4.1.2",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "rimraf": "^3.0.0"
   },
   "repository": {
     "type": "git",

@@ -9,8 +9,7 @@ module.exports = {
             },
             queries: {
                 'screen and (min-width: 1024px)': 'desktop'
-            },
-            stats: false
+            }
         }
     }
 };
