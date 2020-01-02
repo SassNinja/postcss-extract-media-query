@@ -59,11 +59,18 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
     return (root, result) => {
 
         let from = 'undefined.css';
-
+        
         if (opts.entry) {
             from = opts.entry;
         } else if (result.opts.from) {
             from = result.opts.from;
+        }
+
+        const map = {};
+        const mapMatch = root.source.input.css.match(/\/\*# sourceMappingURL=([^\s]+)\s\*\//);
+
+        if (mapMatch) {
+            map.annotation = mapMatch[1];
         }
 
         const file = from.match(/([^/\\]+)\.(\w+)(?:\?.+)?$/);
@@ -103,6 +110,10 @@ module.exports = postcss.plugin('postcss-extract-media-query', opts => {
 
                     plugins.applyPlugins(css, newFilePath).then(css => {
 
+                        if (map.annotation) {
+                            // append original source map if available
+                            css = `${css}\n\n/*# sourceMappingURL=${map.annotation} */`;
+                        }
                         if (!fs.existsSync(path.dirname(newFilePath))) {
                             // make sure we can write
                             fs.mkdirSync(newFileDir, { recursive: true });
