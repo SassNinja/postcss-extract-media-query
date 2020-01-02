@@ -14,8 +14,8 @@ function sass() {
     return gulp.src(['src/example.scss'])
         .pipe($.sourcemaps.init())
         .pipe($.sass().on('error', $.sass.logError))
-        .pipe($.sourcemaps.write())
         .pipe($.postcss())
+        .pipe($.sourcemaps.write('.'))
         .pipe(gulp.dest('dist'));
 }
 
