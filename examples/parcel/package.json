@@ -10,7 +10,9 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "parcel-bundler": "^1.10.3",
-    "postcss-extract-media-query": "2.x"
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-nuke-dist": "^1.0.1",
+    "postcss-extract-media-query": "2.x",
+    "sass": "^1.24.0"
   }
 }

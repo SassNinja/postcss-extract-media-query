@@ -1,0 +1,6 @@
+@import 'foo';
+@import 'bar';
+.test { z-index: 1; }
+@media screen and (min-width: 1200px) {
+  .test { z-index: 2; }
+}

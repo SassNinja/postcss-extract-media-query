@@ -2,7 +2,6 @@
 const path = require('path');
 const gulp = require('gulp');
 const $ = require('gulp-load-plugins')();
-const extractMediaQuery = require('postcss-extract-media-query');
 
 function clean() {
     return gulp.src(path.join(__dirname, 'dist/*'))
@@ -11,13 +10,16 @@ function clean() {
         }));
 }
 
-function css() {
-    return gulp.src(path.join(__dirname, 'src/*.css'))
+function sass() {
+    return gulp.src(['src/example.scss'])
+        .pipe($.sourcemaps.init())
+        .pipe($.sass().on('error', $.sass.logError))
+        .pipe($.sourcemaps.write())
         .pipe($.postcss())
-        .pipe(gulp.dest(path.join(__dirname, 'dist')));
+        .pipe(gulp.dest('dist'));
 }
 
 gulp.task('default', gulp.series(
     clean,
-    css
+    sass
 ));

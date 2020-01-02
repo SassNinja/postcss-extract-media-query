@@ -1,6 +1,5 @@
 
 const path = require('path');
-const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -13,14 +12,16 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'dist')
     },
+    devtool: 'inline-source-map',
     module: {
         rules: [
             {
-                test: /\.css$/,
+                test: /\.scss$/,
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader',
-                    'postcss-loader'
+                    'postcss-loader',
+                    'sass-loader'
                 ]
             }
         ]

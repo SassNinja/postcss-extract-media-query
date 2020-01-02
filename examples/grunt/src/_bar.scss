@@ -1,0 +1,4 @@
+.bar { font-size: 1rem; }
+@media screen and (min-width: 1024px) {
+  .bar { font-size: 2rem; }
+}

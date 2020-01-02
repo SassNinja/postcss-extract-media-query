@@ -11,9 +11,10 @@
   "dependencies": {},
   "devDependencies": {
     "fuse-box": "^3.2.2",
+    "node-sass": "^4.13.0",
     "postcss": "^6.0.22",
     "postcss-extract-media-query": "2.x",
-    "typescript": "^2.8.3",
+    "typescript": "^3.7.4",
     "uglify-es": "^3.3.9",
     "uglify-js": "^3.3.28"
   }

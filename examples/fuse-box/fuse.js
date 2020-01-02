@@ -2,7 +2,7 @@
 const extractMediaQuery = require('postcss-extract-media-query');
 const extractMediaQueryConfig = require('./postcss.config').plugins['postcss-extract-media-query'];
 
-const { FuseBox, PostCSSPlugin, CSSPlugin } = require('fuse-box');
+const { FuseBox, SassPlugin, PostCSSPlugin, CSSPlugin } = require('fuse-box');
 const { src, task, exec, context } = require('fuse-box/sparky');
 
 context(class {
@@ -10,10 +10,13 @@ context(class {
         return FuseBox.init({
             homeDir: 'src',
             output: 'dist/$name.js',
+            sourceMaps: true,
+            cache: false,
             target: 'browser@es2015',
             ensureTsConfig: false,
             plugins: [
                 [
+                    SassPlugin(),
                     PostCSSPlugin([
                         extractMediaQuery(extractMediaQueryConfig)
                     ]),

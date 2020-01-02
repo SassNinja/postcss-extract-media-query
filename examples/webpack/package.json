@@ -13,8 +13,10 @@
     "clean-webpack-plugin": "^2.0.1",
     "css-loader": "^2.1.1",
     "mini-css-extract-plugin": "^0.5.0",
+    "node-sass": "^4.13.0",
     "postcss-extract-media-query": "2.x",
     "postcss-loader": "^3.0.0",
+    "sass-loader": "^8.0.0",
     "webpack": "^4.29.6",
     "webpack-cli": "^3.3.0"
   }

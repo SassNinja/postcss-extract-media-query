@@ -1,4 +1,4 @@
 
-import './example.css';
+import './example.scss';
 
 console.log('Hello World');

@@ -14,9 +14,37 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "example: fuse-box",
+            "program": "${workspaceFolder}/examples/fuse-box/fuse.js",
+            "cwd": "${workspaceFolder}/examples/fuse-box"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "example: grunt",
+            "program": "${workspaceFolder}/examples/grunt/node_modules/.bin/grunt",
+            "cwd": "${workspaceFolder}/examples/grunt"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "example: gulp",
             "program": "${workspaceFolder}/examples/gulp/node_modules/.bin/gulp",
             "cwd": "${workspaceFolder}/examples/gulp"
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "example: parcel",
+            "program": "${workspaceFolder}/examples/parcel/parcel.js",
+            "cwd": "${workspaceFolder}/examples/parcel"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "example: webpack",
+            "program": "${workspaceFolder}/examples/webpack/node_modules/.bin/webpack",
+            "cwd": "${workspaceFolder}/examples/webpack"
+        },
     ]
 }
