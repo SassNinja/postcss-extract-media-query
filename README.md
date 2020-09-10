@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/SassNinja/postcss-extract-media-query.svg?branch=master)](https://travis-ci.com/SassNinja/postcss-extract-media-query)
 
-If page speed is important to you chances are high you're already doing code splitting. If your CSS is built mobile-first (in particular if using a framework such as [Bootstrap](https://getbootstrap.com/) or [Foundation](https://foundation.zurb.com/sites.html)) chances are also high you're loading more CSS than the current viewport actually needs.
+If page speed is important to you chances are high you're already doing code splitting. If your CSS is built mobile-first (in particular if using a framework such as [Bootstrap](https://getbootstrap.com/) or [Foundation](https://get.foundation/sites.html)) chances are also high you're loading more CSS than the current viewport actually needs.
 
 It would be much better if a mobile user doesn't need to load desktop specific CSS, wouldn't it?
 
