@@ -6,7 +6,7 @@ If page speed is important to you chances are high you're already doing code spl
 
 It would be much better if a mobile user doesn't need to load desktop specific CSS, wouldn't it?
 
-That's the use case I've written this PostCSS plugin for! It lets you extract all `@media` rules from your CSS and emit them as separate files which you can load as `<link rel="stylesheet" media="screen and (min-width: 1024px)" href="desktop.css">` or as dynamic import.
+That's the use case I've written this PostCSS plugin for! It lets you extract all `@media` rules from your CSS and emit them as separate files which you can load as `<link rel="stylesheet" media="screen and (min-width: 1024px)" href="desktop.css">` or load them dynamically.
 
 **Before**
 
@@ -36,6 +36,31 @@ That's the use case I've written this PostCSS plugin for! It lets you extract al
     .foo { color: green }
     .bar { font-size: 2rem }
 }
+```
+
+## Potential performance benefits
+
+### As a `link` element with `media` attribute
+
+If you reference the separate files using a `link` element with a `media` attribute (e.g. `<link rel="stylesheet" media="screen and (min-width: 1024px)" href="desktop.css">`) then [browsers will still load each CSS file](https://blog.tomayac.com/2018/11/08/why-browsers-download-stylesheets-with-non-matching-media-queries-180513/) (in case the user changes something which now means a different media query is matched), **but they will download the non-matching media query files as lower priority, and they will not block the initial render of the page**. 
+
+### Dynamic loading
+
+If you don't want the unmatched media query CSS to download _at all_ then you could only reference your mobile-first CSS with a HTML `link` element, and for the rest of the media queries load the CSS dynamicaly with JavaScript. There are lots of different ways to do this, the example approach below uses [matchMedia](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia) and [loadCSS](https://github.com/filamentgroup/loadCSS):
+
+
+```
+<!-- Load the loadCSS script -->
+<script src="https://cdn.jsdelivr.net/npm/fg-loadcss@3.1.0/dist/loadCSS.min.js" integrity="sha256-PfuBYBreSv0el08vXRTkDhLawwSJicsqhPwaoFq/R7I=" crossorigin="anonymous"></script>
+
+<script>
+  // Use matchMedia to see if the media query matches.
+  var desktop = window.matchMedia("(min-width: 1024px)");
+  // If it does, use loadCSS to dynamically load the CSS file.
+  if (desktop.matches) {
+    loadCSS("desktop.css");
+  }
+</script>
 ```
 
 ## Installation
