@@ -10,5 +10,6 @@ yarn.lock
 # exclude unit testing output
 test/output
 
-# exclude examples dist
+# exclude examples generated output
 examples/*/dist
+examples/*/package-lock.json
