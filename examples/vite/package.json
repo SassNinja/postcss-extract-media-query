@@ -1,0 +1,16 @@
+{
+  "name": "vite-example",
+  "version": "1.0.0",
+  "description": "Complete example for vite.",
+  "author": "Kai Falkowski",
+  "license": "MIT",
+  "main": "vite.config.js",
+  "scripts": {
+    "start": "vite build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "postcss-extract-media-query": "2.x",
+    "vite": "^2.6.2"
+  }
+}
