@@ -1,15 +1,29 @@
-.foo { color: red; }
-@media screen and (min-width: 1024px) {
-  .foo { color: green; }
+.foo {
+  color: red;
 }
-.bar { font-size: 1rem; }
 @media screen and (min-width: 1024px) {
-  .bar { font-size: 2rem; }
+  .foo {
+    color: green;
+  }
 }
-.test { z-index: 1; }
+.bar {
+  font-size: 1rem;
+}
+@media screen and (min-width: 1024px) {
+  .bar {
+    font-size: 2rem;
+  }
+}
+.test {
+  z-index: 1;
+}
 @media screen and (min-width: 1200px) {
-  .test { z-index: 2; }
+  .test {
+    z-index: 2;
+  }
 }
 @media screen and (min-width: 999px) {
-    .whitelist { z-index: 999; }
+  .whitelist {
+    z-index: 999;
+  }
 }

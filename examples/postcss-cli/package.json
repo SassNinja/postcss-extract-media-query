@@ -1,17 +1,17 @@
 {
-    "name": "standalone-example",
-    "version": "1.0.0",
-    "description": "Complete example for using PostCSS cli.",
-    "author": "Kai Falkowski",
-    "license": "MIT",
-    "main": "build.js",
-    "scripts": {
-        "start": "postcss src/*.css -d dist"
-    },
-    "dependencies": {},
-    "devDependencies": {
-        "postcss": "^8.3.8",
-        "postcss-cli": "^9.0.1",
-        "postcss-extract-media-query": "2.x"
-    }
+  "name": "standalone-example",
+  "version": "1.0.0",
+  "description": "Complete example for using PostCSS cli.",
+  "author": "Kai Falkowski",
+  "license": "MIT",
+  "main": "build.js",
+  "scripts": {
+    "start": "postcss src/*.css -d dist"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "postcss": "^8.3.8",
+    "postcss-cli": "^9.0.1",
+    "postcss-extract-media-query": "2.x"
+  }
 }

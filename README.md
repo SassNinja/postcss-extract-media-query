@@ -11,41 +11,62 @@ That's the use case I've written this PostCSS plugin for! It lets you extract al
 **Before**
 
 - example.css
+
 ```css
-.foo { color: red }
-@media screen and (min-width: 1024px) {
-    .foo { color: green }
+.foo {
+  color: red;
 }
-.bar { font-size: 1rem }
 @media screen and (min-width: 1024px) {
-    .bar { font-size: 2rem }
+  .foo {
+    color: green;
+  }
+}
+.bar {
+  font-size: 1rem;
+}
+@media screen and (min-width: 1024px) {
+  .bar {
+    font-size: 2rem;
+  }
 }
 ```
 
 **After**
 
 - example.css
+
 ```css
-.foo { color: red }
-.bar { font-size: 1rem }
+.foo {
+  color: red;
+}
+.bar {
+  font-size: 1rem;
+}
 ```
 
 - example-desktop.css
+
 ```css
 @media screen and (min-width: 1024px) {
-    .foo { color: green }
-    .bar { font-size: 2rem }
+  .foo {
+    color: green;
+  }
+  .bar {
+    font-size: 2rem;
+  }
 }
 ```
 
 ## Installation
 
 - npm
+
 ```bash
 npm install postcss-extract-media-query --save-dev
 ```
 
 - yarn
+
 ```bash
 yarn add postcss-extract-media-query --dev
 ```
@@ -58,14 +79,14 @@ You can find complete examples <a href="examples">here</a>.
 
 ## Options
 
-| option        | default                    |
-| ------------- | -------------------------- |
-| output.path   | path.join(__dirname, '..') |
-| output.name   | '[name]-[query].[ext]'     |
-| queries       | {}                         |
-| extractAll    | true                       |
-| stats         | true                       |
-| entry         | null                       |
+| option      | default                      |
+| ----------- | ---------------------------- |
+| output.path | path.join(\_\_dirname, '..') |
+| output.name | '[name]-[query].[ext]'       |
+| queries     | {}                           |
+| extractAll  | true                         |
+| stats       | true                         |
+| entry       | null                         |
 
 ### output
 
@@ -162,6 +183,7 @@ So if you have used them you simply need to install appropriate PostCSS plugins 
 ```bash
 npm install postcss-combine-media-query cssnano --save-dev
 ```
+
 ```javascript
 plugins: {
     'postcss-combine-media-query': {},
