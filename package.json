@@ -6,6 +6,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
+    "prepare": "husky install",
     "test": "mocha"
   },
   "keywords": [
@@ -27,7 +28,10 @@
   },
   "devDependencies": {
     "chai": "^4.1.2",
+    "husky": "^7.0.0",
     "mocha": "^5.2.0",
+    "prettier": "^2.4.1",
+    "pretty-quick": "^3.1.1",
     "rimraf": "^3.0.0"
   },
   "repository": {

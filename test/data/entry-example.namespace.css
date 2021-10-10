@@ -1,3 +1,5 @@
 @media screen {
-  .foo { color: blue; }
+  .foo {
+    color: blue;
+  }
 }
