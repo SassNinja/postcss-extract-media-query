@@ -174,6 +174,15 @@ It's also possible to pass the config as object to avoid any file resolution.
 
 ## Migration
 
+### coming from 2.x
+
+PostCSS has been updated to 8.x (which is the minimum required version now) and is no longer packaged with this plugin but has become a peer dependency.
+What does this mean for you? If you're using npm >= v7 it's automatically installed, otherwise you need to install it yourself.
+
+```bash
+npm install postcss --save-dev
+```
+
 ### coming from 1.x
 
 Both options, `combine` and `minimize`, have been removed in v2 because the plugin parses your `postcss.config.js` now and applies all subsequent plugins to the extracted files as well.
@@ -181,7 +190,7 @@ Both options, `combine` and `minimize`, have been removed in v2 because the plug
 So if you have used them you simply need to install appropriate PostCSS plugins (see below for example) and add them to your PostCSS config.
 
 ```bash
-npm install postcss-combine-media-query cssnano --save-dev
+npm install postcss postcss-combine-media-query cssnano --save-dev
 ```
 
 ```javascript
