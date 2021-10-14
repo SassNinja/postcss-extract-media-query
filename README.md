@@ -62,13 +62,13 @@ That's the use case I've written this PostCSS plugin for! It lets you extract al
 - npm
 
 ```bash
-npm install postcss-extract-media-query --save-dev
+npm install postcss postcss-extract-media-query --save-dev
 ```
 
 - yarn
 
 ```bash
-yarn add postcss-extract-media-query --dev
+yarn add postcss postcss-extract-media-query --dev
 ```
 
 ## Usage

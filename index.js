@@ -7,7 +7,7 @@ const SubsequentPlugins = require('./subsequent-plugins');
 
 const plugins = new SubsequentPlugins();
 
-module.exports = postcss.plugin('postcss-extract-media-query', (opts) => {
+module.exports = (opts) => {
   opts = _.merge(
     {
       output: {
@@ -67,67 +67,72 @@ module.exports = postcss.plugin('postcss-extract-media-query', (opts) => {
     return { css, query };
   }
 
-  return (root, result) => {
-    let from = 'undefined.css';
+  return {
+    postcssPlugin: 'postcss-extract-media-query',
+    Once(root, { result }) {
+      let from = 'undefined.css';
 
-    if (opts.entry) {
-      from = opts.entry;
-    } else if (result.opts.from) {
-      from = result.opts.from;
-    }
+      if (opts.entry) {
+        from = opts.entry;
+      } else if (result.opts.from) {
+        from = result.opts.from;
+      }
 
-    const file = from.match(/([^/\\]+)\.(\w+)(?:\?.+)?$/);
-    const name = file[1];
-    const ext = file[2];
+      const file = from.match(/([^/\\]+)\.(\w+)(?:\?.+)?$/);
+      const name = file[1];
+      const ext = file[2];
 
-    if (opts.output.path) {
-      root.walkAtRules('media', (atRule) => {
-        const query = atRule.params;
-        const queryname =
-          opts.queries[query] || (opts.extractAll && _.kebabCase(query));
+      if (opts.output.path) {
+        root.walkAtRules('media', (atRule) => {
+          const query = atRule.params;
+          const queryname =
+            opts.queries[query] || (opts.extractAll && _.kebabCase(query));
 
-        if (queryname) {
-          const css = postcss.root().append(atRule).toString();
+          if (queryname) {
+            const css = postcss.root().append(atRule).toString();
 
-          addMedia(queryname, css, query);
-          atRule.remove();
-        }
-      });
-    }
+            addMedia(queryname, css, query);
+            atRule.remove();
+          }
+        });
+      }
 
-    const promises = [];
+      const promises = [];
 
-    // gather promises only if output.path specified because otherwise
-    // nothing has been extracted
-    if (opts.output.path) {
-      Object.keys(media).forEach((queryname) => {
-        promises.push(
-          new Promise((resolve) => {
-            let { css } = getMedia(queryname);
-            const newFile = opts.output.name
-              .replace(/\[name\]/g, name)
-              .replace(/\[query\]/g, queryname)
-              .replace(/\[ext\]/g, ext);
-            const newFilePath = path.join(opts.output.path, newFile);
-            const newFileDir = path.dirname(newFilePath);
+      // gather promises only if output.path specified because otherwise
+      // nothing has been extracted
+      if (opts.output.path) {
+        Object.keys(media).forEach((queryname) => {
+          promises.push(
+            new Promise((resolve) => {
+              let { css } = getMedia(queryname);
+              const newFile = opts.output.name
+                .replace(/\[name\]/g, name)
+                .replace(/\[query\]/g, queryname)
+                .replace(/\[ext\]/g, ext);
+              const newFilePath = path.join(opts.output.path, newFile);
+              const newFileDir = path.dirname(newFilePath);
 
-            plugins.applyPlugins(css, newFilePath).then((css) => {
-              if (!fs.existsSync(path.dirname(newFilePath))) {
-                // make sure we can write
-                fs.mkdirSync(newFileDir, { recursive: true });
-              }
-              fs.writeFileSync(newFilePath, css);
+              plugins.applyPlugins(css, newFilePath).then((css) => {
+                if (!fs.existsSync(path.dirname(newFilePath))) {
+                  // make sure we can write
+                  fs.mkdirSync(newFileDir, { recursive: true });
+                }
+                fs.writeFileSync(newFilePath, css);
 
-              if (opts.stats === true) {
-                console.log(green('[extracted media query]'), newFile);
-              }
-              resolve();
-            });
-          })
-        );
-      });
-    }
+                if (opts.stats === true) {
+                  console.log(green('[extracted media query]'), newFile);
+                }
+                resolve();
+              });
+            })
+          );
+        });
+      }
 
-    return Promise.all(promises);
+      return Promise.all(promises);
+    },
   };
-});
+};
+
+module.exports.postcss = true;
