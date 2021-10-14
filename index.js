@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const fs = require('fs');
 const path = require('path');
-const { green, yellow } = require('kleur');
+const { green } = require('kleur');
 const postcss = require('postcss');
 const SubsequentPlugins = require('./subsequent-plugins');
 
@@ -24,31 +24,6 @@ module.exports = (opts) => {
 
   if (opts.config) {
     plugins.updateConfig(opts.config);
-  }
-
-  // Deprecation warnings
-  // TODO: remove in future
-  if (typeof opts.whitelist === 'boolean') {
-    console.log(
-      yellow('[WARNING] whitelist option is deprecated – please use extractAll')
-    );
-    if (opts.whitelist === true) {
-      opts.extractAll = false;
-    }
-  }
-  if (opts.combine) {
-    console.log(
-      yellow(
-        '[WARNING] combine option is deprecated – please use another plugin for this'
-      )
-    );
-  }
-  if (opts.minimize) {
-    console.log(
-      yellow(
-        '[WARNING] minimize option is deprecated – please use another plugin for this'
-      )
-    );
   }
 
   const media = {};
