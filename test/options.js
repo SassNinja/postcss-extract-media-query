@@ -182,17 +182,23 @@ describe('Options', function () {
   describe('config', function () {
     it('should use opts.config if present to apply plugins', (done) => {
       let precedingPluginCalls = 0;
-      const precedingPlugin = postcss.plugin('preceding-plugin', (opts) => {
-        return (root, result) => {
-          precedingPluginCalls++;
+      const precedingPlugin = () => {
+        return {
+          postcssPlugin: 'preceding-plugin',
+          Once() {
+            precedingPluginCalls++;
+          },
         };
-      });
+      };
       let subsequentPluginCalls = 0;
-      const subsequentPlugin = postcss.plugin('subsequent-plugin', (opts) => {
-        return (root, result) => {
-          subsequentPluginCalls++;
+      const subsequentPlugin = () => {
+        return {
+          postcssPlugin: 'subsequent-plugin',
+          Once() {
+            subsequentPluginCalls++;
+          },
         };
-      });
+      };
       const opts = {
         output: {
           path: path.join(__dirname, 'output'),
