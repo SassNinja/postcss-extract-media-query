@@ -28,18 +28,25 @@ module.exports = (opts) => {
 
   const media = {};
 
-  function addMedia(key, css, query) {
-    if (!Array.isArray(media[key])) {
-      media[key] = [];
+  function addMedia(name, key, css, query) {
+    if (!Array.isArray(media?.[name]?.[key])) {
+      media[name] = {
+        ...media[name],
+        [key]: new Array(),
+      };
     }
-    media[key].push({ css, query });
+    media[name][key].push({ css, query });
   }
+  
+  function getMedia(name, key) {
+    if (media?.[name]?.[key]?.length) {
+      const css = media[name][key].map((data) => data.css).join("\n");
+      const query = media[name][key][0].query;
 
-  function getMedia(key) {
-    const css = media[key].map((data) => data.css).join('\n');
-    const query = media[key][0].query;
-
-    return { css, query };
+      return { css, query };
+    } else {
+      return {};
+    }
   }
 
   return {
@@ -66,7 +73,7 @@ module.exports = (opts) => {
           if (queryname) {
             const css = postcss.root().append(atRule).toString();
 
-            addMedia(queryname, css, query);
+            addMedia(name, queryname, css, query);
             atRule.remove();
           }
         });
@@ -77,31 +84,32 @@ module.exports = (opts) => {
       // gather promises only if output.path specified because otherwise
       // nothing has been extracted
       if (opts.output.path) {
-        Object.keys(media).forEach((queryname) => {
-          promises.push(
-            new Promise((resolve) => {
-              let { css } = getMedia(queryname);
-              const newFile = opts.output.name
-                .replace(/\[name\]/g, name)
-                .replace(/\[query\]/g, queryname)
-                .replace(/\[ext\]/g, ext);
-              const newFilePath = path.join(opts.output.path, newFile);
-              const newFileDir = path.dirname(newFilePath);
+        Object.entries(media).forEach(([name, value]) => {
+          Object.keys(value).forEach((queryname) => {
+            promises.push(
+              new Promise((resolve) => {
+                let { css } = getMedia(name, queryname);
+                const newFile = opts.output.name
+                  .replace(/\[name\]/g, name)
+                  .replace(/\[query\]/g, queryname)
+                  .replace(/\[ext\]/g, ext);
+                const newFilePath = path.join(opts.output.path, newFile);
+                const newFileDir = path.dirname(newFilePath);
+                plugins.applyPlugins(css, newFilePath).then((css) => {
+                  if (!fs.existsSync(path.dirname(newFilePath))) {
+                    // make sure we can write
+                    fs.mkdirSync(newFileDir, { recursive: true });
+                  }
+                  fs.writeFileSync(newFilePath, css);
 
-              plugins.applyPlugins(css, newFilePath).then((css) => {
-                if (!fs.existsSync(path.dirname(newFilePath))) {
-                  // make sure we can write
-                  fs.mkdirSync(newFileDir, { recursive: true });
-                }
-                fs.writeFileSync(newFilePath, css);
-
-                if (opts.stats === true) {
-                  console.log(green('[extracted media query]'), newFile);
-                }
-                resolve();
-              });
-            })
-          );
+                  if (opts.stats === true) {
+                    console.log(green('[extracted media query]'), newFile);
+                  }
+                  resolve();
+                });
+              }),
+            );
+          });
         });
       }
 
