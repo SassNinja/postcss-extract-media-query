@@ -142,6 +142,79 @@ describe('Options', function () {
     });
   });
 
+  describe('output.useSourceDir', function () {
+
+    beforeEach((done) => {
+      // Eliminar cualquier archivo generado por estos tests en el mismo directorio fuente
+      fs.readdirSync(path.join(__dirname, 'data')).forEach((file) => {
+        if (
+          file.startsWith('example-') &&
+          file.endsWith('.css') &&
+          file !== 'example.css'
+        ) {
+          fs.unlinkSync(path.join(__dirname, 'data', file));
+        }
+      });
+      done();
+    });
+
+    it('should emit extracted files in the same directory as the source file when useSourceDir is true', (done) => {
+      const opts = {
+        output: {
+          useSourceDir: true,
+        },
+        stats: false,
+      };
+
+      postcss([plugin(opts)])
+        .process(exampleFile, { from: 'test/data/example.css' })
+        .then(() => {
+          const expected = path.join(__dirname, 'data/example-screen-and-min-width-1024-px.css');
+          assert.isTrue(fs.existsSync(expected));
+          done();
+        });
+    });
+
+    it('should ignore output.path when useSourceDir is true', (done) => {
+      const opts = {
+        output: {
+          path: path.join(__dirname, 'output'),
+          useSourceDir: true,
+        },
+        stats: false,
+      };
+
+      postcss([plugin(opts)])
+        .process(exampleFile, { from: 'test/data/example.css' })
+        .then(() => {
+          const sourceOutput = path.join(__dirname, 'data/example-screen-and-min-width-1024-px.css');
+          const outputPath = path.join(__dirname, 'output/example-screen-and-min-width-1024-px.css');
+
+          assert.isTrue(fs.existsSync(sourceOutput));
+          assert.isFalse(fs.existsSync(outputPath));
+          done();
+        });
+    });
+
+    it('should emit to output.path if useSourceDir is false', (done) => {
+      const opts = {
+        output: {
+          path: path.join(__dirname, 'output'),
+          useSourceDir: false,
+        },
+        stats: false,
+      };
+
+      postcss([plugin(opts)])
+        .process(exampleFile, { from: 'test/data/example.css' })
+        .then(() => {
+          const expected = path.join(__dirname, 'output/example-screen-and-min-width-1024-px.css');
+          assert.isTrue(fs.existsSync(expected));
+          done();
+        });
+    });
+  });
+
   describe('queries', function () {
     it('should use specified query that exactly matches', (done) => {
       const opts = {

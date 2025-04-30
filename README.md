@@ -79,22 +79,23 @@ You can find complete examples <a href="examples">here</a>.
 
 ## Options
 
-| option      | default                      |
-| ----------- | ---------------------------- |
-| output.path | path.join(\_\_dirname, '..') |
-| output.name | '[name]-[query].[ext]'       |
-| queries     | {}                           |
-| extractAll  | true                         |
-| stats       | true                         |
-| entry       | null                         |
+| option              | default                      |
+| ------------------- | ---------------------------- |
+| output.path         | path.join(\_\_dirname, '..') |
+| output.name         | '[name]-[query].[ext]'       |
+| output.useSourceDir | false                        |
+| queries             | {}                           |
+| extractAll          | true                         |
+| stats               | true                         |
+| entry               | null                         |
 
 ### output
 
 By default the plugin will emit the extracted CSS files to your root folder. If you want to change this you have to define an **absolute** path for `output.path`.
 
-Apart from that you can customize the emited filenames by using `output.name`. `[name]` is the filename of the original CSS file, `[query]` the key of the extracted media query and `[ext]` the orignal file extension (mostly `css`). Those three placeholders get replaced by the plugin later.
+Apart from that you can customize the emitted filenames by using `output.name`. `[name]` is the filename of the original CSS file, `[query]` the key of the extracted media query and `[ext]` the original file extension (mostly `css`). Those three placeholders get replaced by the plugin later.
 
-> :warning: by emiting files itself the plugin breaks out of your bundler / task runner context meaning all your other loaders / pipes won't get applied to the extracted files!
+> :warning: by emitting files itself the plugin breaks out of your bundler / task runner context meaning all your other loaders / pipes won't get applied to the extracted files!
 
 ```javascript
 'postcss-extract-media-query': {
@@ -104,6 +105,19 @@ Apart from that you can customize the emited filenames by using `output.name`. `
     }
 }
 ```
+output.useSourceDir
+If set to true, the plugin will emit the extracted CSS files in the same directory as the source CSS file instead of using output.path.
+
+This is useful when you want the media-specific files to be generated alongside their respective source files—particularly helpful in monorepos or multi-entry setups.
+
+```javascript
+'postcss-extract-media-query': {
+    output: {
+        useSourceDir: true
+    }
+}
+```
+If both `output.useSourceDir` and `output.path` are provided, **useSourceDir**: true takes precedence.
 
 ### queries
 

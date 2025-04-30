@@ -13,6 +13,7 @@ module.exports = (opts) => {
       output: {
         path: path.join(__dirname, '..'),
         name: '[name]-[query].[ext]',
+        useSourceDir: false,
       },
       queries: {},
       extractAll: true,
@@ -56,6 +57,7 @@ module.exports = (opts) => {
       const file = from.match(/([^/\\]+)\.(\w+)(?:\?.+)?$/);
       const name = file[1];
       const ext = file[2];
+      const entryPath =  path.dirname(from);
 
       if (opts.output.path) {
         root.walkAtRules('media', (atRule) => {
@@ -85,7 +87,9 @@ module.exports = (opts) => {
                 .replace(/\[name\]/g, name)
                 .replace(/\[query\]/g, queryname)
                 .replace(/\[ext\]/g, ext);
-              const newFilePath = path.join(opts.output.path, newFile);
+
+              const newPath = opts.output.useSourceDir ? entryPath : opts.output.path;
+              const newFilePath = path.join(newPath, newFile);
               const newFileDir = path.dirname(newFilePath);
 
               plugins.applyPlugins(css, newFilePath).then((css) => {
