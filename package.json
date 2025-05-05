@@ -1,13 +1,18 @@
 {
   "name": "postcss-extract-media-query",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "PostCSS plugin to extract all media query from CSS and emit as separate files.",
-  "author": "Kai Falkowski",
+  "author": "Kai Tran",
   "license": "MIT",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "prepare": "husky install",
-    "test": "mocha"
+    "build": "tsc",
+    "prepare": "husky install && npm run build",
+    "test": "jest"
   },
   "keywords": [
     "postcss",
@@ -20,19 +25,25 @@
     "split",
     "combine"
   ],
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "dependencies": {
-    "app-root-path": "^3.0.0",
-    "kleur": "^4.1.4",
-    "lodash": "^4.17.10"
+    "app-root-path": "^3.1.0",
+    "kleur": "^4.1.5",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
-    "chai": "^4.3.4",
+    "@types/jest": "^29.5.14",
+    "@types/lodash": "^4.17.16",
+    "@types/node": "^22.15.3",
     "husky": "^7.0.0",
-    "mocha": "^9.1.2",
-    "postcss": "^8.3.9",
-    "prettier": "^2.4.1",
-    "pretty-quick": "^3.1.1",
-    "rimraf": "^3.0.2"
+    "jest": "^29.7.0",
+    "prettier": "^3.5.3",
+    "pretty-quick": "^4.1.1",
+    "rimraf": "^6.0.1",
+    "ts-jest": "^29.3.2",
+    "typescript": "^5.8.3"
   },
   "peerDependencies": {
     "postcss": "^8.0.0"

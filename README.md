@@ -1,12 +1,10 @@
 # postcss-extract-media-query
 
-[![Build Status](https://travis-ci.com/SassNinja/postcss-extract-media-query.svg?branch=master)](https://travis-ci.com/SassNinja/postcss-extract-media-query)
-
 If page speed is important to you chances are high you're already doing code splitting. If your CSS is built mobile-first (in particular if using a framework such as [Bootstrap](https://getbootstrap.com/) or [Foundation](https://get.foundation/sites.html)) chances are also high you're loading more CSS than the current viewport actually needs.
 
 It would be much better if a mobile user doesn't need to load desktop specific CSS, wouldn't it?
 
-That's the use case I've written this PostCSS plugin for! It lets you extract all `@media` rules from your CSS and emit them as separate files which you can load as `<link rel="stylesheet" media="screen and (min-width: 1024px)" href="desktop.css">` or as dynamic import.
+That's the use case I've written this PostCSS plugin for! It lets you extract all `@media` rules from your CSS and emit them as separate files which you can dynamically import based on the user's viewport (recommended) or load with lower priority (less performance gain) as `<link rel="stylesheet" media="screen and (min-width: 1024px)" href="desktop.css">`
 
 **Before**
 
@@ -57,6 +55,16 @@ That's the use case I've written this PostCSS plugin for! It lets you extract al
 }
 ```
 
+```javascript
+// simple example for dynamically loading desktop specific CSS based on viewport width
+if (window.innerWidth >= 1024) {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = '/assets/css/example-desktop.css';
+  document.head.append(link);
+}
+```
+
 ## Installation
 
 - npm
@@ -92,16 +100,30 @@ You can find complete examples <a href="examples">here</a>.
 
 By default the plugin will emit the extracted CSS files to your root folder. If you want to change this you have to define an **absolute** path for `output.path`.
 
-Apart from that you can customize the emited filenames by using `output.name`. `[name]` is the filename of the original CSS file, `[query]` the key of the extracted media query and `[ext]` the orignal file extension (mostly `css`). Those three placeholders get replaced by the plugin later.
+Apart from that you can customize the emitted filenames by using `output.name`. `[path]` is the relative path of the original CSS file relative to root, `[name]` is the filename of the original CSS file, `[query]` the key of the extracted media query and `[ext]` the original file extension (mostly `css`). Those three placeholders get replaced by the plugin later.
 
-> :warning: by emiting files itself the plugin breaks out of your bundler / task runner context meaning all your other loaders / pipes won't get applied to the extracted files!
+> :warning: by emitting files itself the plugin breaks out of your bundler / task runner context meaning all your other loaders / pipes won't get applied to the extracted files!
 
 ```javascript
 'postcss-extract-media-query': {
     output: {
         path: path.join(__dirname, 'dist'), // emit to 'dist' folder in root
-        name: '[name]-[query].[ext]' // pattern of emited files
+        name: '[name]-[query].[ext]' // pattern of emitted files
     }
+}
+```
+
+By default the plugin flattens the file structure meaning the original folder structure won't be preserved which might be problem if you're using the same file name across multiple folders. This can easily be fixed with the `[path]` placeholder
+
+```
+name: '[path]/[name]-[query].[ext]'
+```
+
+In rare cases where you need more control, you may pass a name function which receive all placeholders as args
+
+```
+name: ({ path, name, query, ext }) => {
+  return `example/${name}-${query}.${ext}`
 }
 ```
 
@@ -129,7 +151,7 @@ By default the plugin extracts all media queries into separate files. If you wan
 
 ### stats
 
-By default the plugin displays in your terminal / command prompt which files have been emited. If you don't want to see it just set this option `false`.
+By default the plugin displays in your terminal / command prompt which files have been emitted. If you don't want to see it just set this option `false`.
 
 ```javascript
 'postcss-extract-media-query': {

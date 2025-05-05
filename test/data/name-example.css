@@ -1,0 +1,8 @@
+.example {
+  color: red;
+}
+@media screen {
+  .example {
+    color: green;
+  }
+}

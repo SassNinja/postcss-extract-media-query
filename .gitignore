@@ -3,6 +3,7 @@
 node_modules
 .fusebox
 .cache
+dist
 
 # prefer npm
 yarn.lock

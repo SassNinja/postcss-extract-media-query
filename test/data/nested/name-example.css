@@ -1,0 +1,8 @@
+.example {
+  z-index: 1;
+}
+@media screen {
+  .example {
+    z-index: 2;
+  }
+}
