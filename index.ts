@@ -124,7 +124,10 @@ const plugin = (options?: DeepPartial<PluginOptions>): AcceptedPlugin => {
                       ext,
                     })
                   : opts.output.name
-                      .replace(/\[path\]/g, relativePath)
+                      .replace(/\[path\](\/)?/g, (_, sep = '') =>
+                        // avoid absolute path if relativePath is empty
+                        relativePath ? relativePath + sep : ''
+                      )
                       .replace(/\[name\]/g, name)
                       .replace(/\[query\]/g, queryname)
                       .replace(/\[ext\]/g, ext);

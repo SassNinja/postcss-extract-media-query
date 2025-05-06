@@ -1,6 +1,6 @@
 {
   "name": "postcss-extract-media-query",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "PostCSS plugin to extract all media query from CSS and emit as separate files.",
   "author": "Kai Tran",
   "license": "MIT",

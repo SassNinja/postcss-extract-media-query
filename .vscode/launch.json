@@ -8,8 +8,9 @@
       "type": "node",
       "request": "launch",
       "name": "run test",
-      "program": "${workspaceFolder}/node_modules/.bin/_mocha",
-      "args": ["--timeout", "60000"]
+      "console": "internalConsole",
+      "program": "${workspaceFolder}/node_modules/.bin/jest",
+      "args": ["--openHandlesTimeout", "60000"]
     },
     {
       "type": "node",
