@@ -95,6 +95,7 @@ You can find complete examples <a href="examples">here</a>.
 | extractAll  | true                         |
 | stats       | true                         |
 | entry       | null                         |
+| src.path    | null                         |
 
 ### output
 
@@ -166,6 +167,29 @@ By default the plugin uses the `from` value from the options of the loader or of
 ```javascript
 'postcss-extract-media-query': {
     entry: path.join(__dirname, 'some/path/example.css')
+}
+```
+
+### src
+
+> [!NOTE]
+> This option is only relevant if you're using the `path` placeholder in `output.name`
+
+By default the plugin determines the root by looking for the package.json file and uses it as srcPath (if there's no app or src folder) to compute the relative path.
+
+In case the automatically determined srcPath doesn't suit you, it's possible to override it with this option.
+
+```javascript
+'postcss-extract-media-query': {
+    output: {
+        path: path.join(__dirname, 'dist'),
+        name: '[path]/[name]-[query].[ext]'
+    },
+    src: {
+        // from: example/nested/src/components/button.css
+        // to: dist/components/button-xxxxx.css
+        path: path.join(__dirname, 'example/nested/src')
+    }
 }
 ```
 

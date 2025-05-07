@@ -19,6 +19,9 @@ const plugin = (options?: DeepPartial<PluginOptions>): AcceptedPlugin => {
       extractAll: true,
       stats: true,
       entry: null,
+      src: {
+        path: null,
+      },
     },
     options
   ) as PluginOptions;
@@ -44,6 +47,9 @@ const plugin = (options?: DeepPartial<PluginOptions>): AcceptedPlugin => {
   }
 
   function getRootPath(currentPath: string) {
+    if (opts.src.path) {
+      return null;
+    }
     if (!currentPath || fs.existsSync(path.join(currentPath, 'package.json'))) {
       return currentPath;
     }
@@ -55,6 +61,9 @@ const plugin = (options?: DeepPartial<PluginOptions>): AcceptedPlugin => {
   }
 
   function getSrcPath(rootPath: string | null) {
+    if (opts.src.path) {
+      return opts.src.path;
+    }
     if (!rootPath) {
       return rootPath;
     }

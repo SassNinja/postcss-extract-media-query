@@ -169,6 +169,24 @@ describe('Options', () => {
         fs.existsSync('test/output/data/nested/name-example-screen.css')
       ).toBe(true);
     });
+    it('should allow overriding the srcPath instead of relying on automatic determination', async () => {
+      const opts = {
+        output: {
+          path: path.join(__dirname, 'output'),
+          name: '[path]/[name]-[query].[ext]',
+        },
+        src: {
+          path: path.join(__dirname, '../test/data'),
+        },
+        stats: false,
+      };
+      await postcss([plugin(opts)]).process(nameNestedExampleFile, {
+        from: 'test/data/nested/name-example.css',
+      });
+      expect(fs.existsSync('test/output/nested/name-example-screen.css')).toBe(
+        true
+      );
+    });
   });
 
   describe('queries', () => {

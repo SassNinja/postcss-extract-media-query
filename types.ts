@@ -54,6 +54,16 @@ export interface PluginOptions {
    */
   entry: string | null;
   /**
+   * This option is only relevant if you're using the `path` placeholder in `output.name`
+   *
+   * By default the plugin determines the root by looking for the package.json file and uses it as srcPath (if there's no app or src folder) to compute the relative path.
+   *
+   * In case the automatically determined srcPath doesn't suit you, it's possible to override it with this option.
+   */
+  src: {
+    path: string | null;
+  };
+  /**
    * By default the plugin looks for a `postcss.config.js` file in your project's root (read [node-app-root-path](https://github.com/inxilpro/node-app-root-path) to understand how root is determined) and tries to apply all subsequent PostCSS plugins to the extracted CSS.
    *
    * In case this lookup doesn't suite you it's possible to specify the config path yourself.
